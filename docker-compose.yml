@@ -1,0 +1,32 @@
+version: '3.9'
+
+services:
+  mysql:
+    image: mysql:5.7
+    container_name: mysql
+    command: --default-authentication-plugin=mysql_native_password
+    restart: always
+    ports:
+      - "3306:3306"
+    environment:
+      - MYSQL_ROOT_PASSWORD=12344321
+      - MYSQL_DATABASE=muslimbot
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - "8080:8080"
+  muslimbot:
+    container_name: muslimbot
+    depends_on:
+      - "mysql"
+    links:
+      - "mysql"
+    ports:
+      - "8000:8000"
+    volumes:
+      - ".:/var/www/html"
+      - "/var/www/html/vendor"
+    build: .
+    command: php -S 0.0.0.0:8000 -t public
+    restart: always
