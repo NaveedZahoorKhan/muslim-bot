@@ -42,7 +42,7 @@ class SendDailyTiming extends Command
      */
     public function handle()
     {
-        $datetime = Carbon::now()->subDays(1);
+        $datetime = Carbon::now();
         $year = $datetime->year;
         $month = $datetime->month;
         $day = $datetime->day;
