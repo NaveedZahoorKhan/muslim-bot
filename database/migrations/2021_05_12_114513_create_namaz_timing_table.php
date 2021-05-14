@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateCalendarTable extends Migration
+class CreateNamazTimingTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,11 +13,8 @@ class CreateCalendarTable extends Migration
      */
     public function up()
     {
-        Schema::create('calendars', function (Blueprint $table) {
+        Schema::create('namaz_timing', function (Blueprint $table) {
             $table->id();
-            $table->integer('month');
-            $table->integer('year');
-            $table->longText('data');
             $table->timestamps();
         });
     }
@@ -29,6 +26,6 @@ class CreateCalendarTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('calendar');
+        Schema::dropIfExists('namaz_timing');
     }
 }

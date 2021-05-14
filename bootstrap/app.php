@@ -48,6 +48,7 @@ $app->singleton(
     App\Console\Kernel::class
 );
 
+
 /*
 |--------------------------------------------------------------------------
 | Register Config Files
@@ -94,6 +95,16 @@ $app->configure('app');
 // $app->register(App\Providers\AppServiceProvider::class);
 // $app->register(App\Providers\AuthServiceProvider::class);
 // $app->register(App\Providers\EventServiceProvider::class);
+
+
+/*
+|--------------------------------------------------------------------------
+| MS Teams Connector Service
+|--------------------------------------------------------------------------
+ */
+
+$app->register(Sebbmyr\LaravelTeams\TeamsConnectorServiceProvider::class);
+
 
 /*
 |--------------------------------------------------------------------------

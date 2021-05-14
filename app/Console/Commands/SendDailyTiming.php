@@ -9,14 +9,14 @@ use Carbon\Carbon;
 use Illuminate\Support\Facades\Http;
 use Sebbmyr\LaravelTeams\Cards\CustomCard;
 
-class SendDailyNotification extends Command
+class SendDailyTiming extends Command
 {
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'calendar:notify';
+    protected $signature = 'calendar:timing';
 
     /**
      * The console command description.
@@ -42,10 +42,39 @@ class SendDailyNotification extends Command
      */
     public function handle()
     {
-        $hadith = HadithUrdu::inRandomOrder()->first();
-        $card = new CustomCard("Today's Hadith", $hadith->title);
-        $card->addColor('800080')
-            ->addFactsText($hadith->hadith_text);
+        $datetime = Carbon::now()->subDays(1);
+        $year = $datetime->year;
+        $month = $datetime->month;
+        $day = $datetime->day;
+        $calendar = Calendar::where('month', $month)->where('year', $year)->get()->first();
+        $data = $calendar['data'];
+        $data = json_decode($data);
+        $date_timings = $data [$day -1];
+        
+        $timings = $date_timings->timings;
+        $date = $date_timings->date;
+        $readable_date = $date->readable;
+        $card = new CustomCard("Prayer Times", $readable_date);
+       $card->addColor('800080')
+            ->addFactsText('Gregorian Date: ', [$date->gregorian->date])
+            ->addFactsText('Islamic Date: ', [$date->hijri->date])
+            ->addFactsText('Islamic Month: ', [$date->hijri->month->ar])
+            ->addFactsText('Islamic Day: ', [$date->hijri->weekday->ar])
+            ->addFactsText('Holidys: ', [count($date->hijri->holidays) > 0 ? $date->hijri->holidays : 'No upcoming holidays'])
+            ->addFacts('Timings: ', ['Fajr' => $timings->Fajr ,
+             "Sunrise" => $timings->Sunrise,
+              "Dhuhr" => $timings->Dhuhr,
+              "Asr" => $timings->Asr,
+              "Sunset" => $timings->Sunset,
+              "Maghrib" => $timings->Maghrib,
+              "Isha" => $timings->Isha,
+              "Imsak" => $timings->Imsak,
+              "Midnight" => $timings->Midnight
+              ]);
+
         app('TeamsConnector')->send($card);
+
+        $this->info(json_encode($timings));
+        return;
     }
 }

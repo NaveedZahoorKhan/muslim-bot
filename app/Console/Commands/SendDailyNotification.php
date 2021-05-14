@@ -3,25 +3,27 @@
 namespace App\Console\Commands;
 
 use App\Models\Calendar;
+use App\Models\HadithUrdu;
 use Illuminate\Console\Command;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Http;
+use Sebbmyr\LaravelTeams\Cards\CustomCard;
 
-class CreateYearlyCalendar extends Command
+class SendDailyNotification extends Command
 {
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'calendar:yearly';
+    protected $signature = 'calendar:notify';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'gets yearly calendar and saves data to database';
+    protected $description = 'sends daily notification to user';
 
     /**
      * Create a new command instance.
@@ -40,24 +42,10 @@ class CreateYearlyCalendar extends Command
      */
     public function handle()
     {
-        $year = Carbon::now()->year;
-        $lang = 31.5055976;
-        $lat = 74.3462127;
-        $method = 2;
-        $response = Http::get(
-            "http://api.aladhan.com/v1/calendar?latitude=$lat&longitude=$lang&method=$method&year=$year&annual=true"
-        );
-
-        $status = $response['status'];
-        $code = $response['code'];
-        if ($status === 'OK' && $code === 200)
-            $items = $response['data'];
-            foreach ($items as $month=>$item) {
-                $calendar = new Calendar();
-                $calendar->month = $month;
-                $calendar->year = $year;
-                $calendar->data = json_encode($items);
-                $calendar->save();
-            }
+        $hadith = HadithUrdu::inRandomOrder()->first();
+        $card = new CustomCard("Today's Hadith", $hadith->title);
+        $card->addColor('800080')
+            ->addFactsText($hadith->hadith_text);
+        app('TeamsConnector')->send($card);
     }
 }
