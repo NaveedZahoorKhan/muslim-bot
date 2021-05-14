@@ -60,17 +60,8 @@ class SendDailyTiming extends Command
             ->addFactsText('Islamic Date: ', [$date->hijri->date])
             ->addFactsText('Islamic Month: ', [$date->hijri->month->ar])
             ->addFactsText('Islamic Day: ', [$date->hijri->weekday->ar])
-            ->addFactsText('Holidays: ', [count($date->hijri->holidays) > 0 ? $date->hijri->holidays : 'No upcoming holidays'])
-            ->addFacts('Timings: ', ['Fajr' => $timings->Fajr ,
-             "Sunrise" => $timings->Sunrise,
-              "Dhuhr" => $timings->Dhuhr,
-              "Asr" => $timings->Asr,
-              "Sunset" => $timings->Sunset,
-              "Maghrib" => $timings->Maghrib,
-              "Isha" => $timings->Isha,
-              "Imsak" => $timings->Imsak,
-              "Midnight" => $timings->Midnight
-              ]);
+            ->addFactsText('Holidays: ', [count($date->hijri->holidays) > 0 ? implode(", ",$date->hijri->holidays) : 'No upcoming holidays'])
+            ->addFacts('Timings: ', ['Fajr' => $timings->Fajr , 'Sunrise' => $timings->Sunrise, 'Dhuhr' => $timings->Dhuhr, 'Asr' => $timings->Asr, 'Sunset' => $timings->Sunset, 'Maghrib' => $timings->Maghrib, 'Isha' => $timings->Isha, 'Imsak' => $timings->Imsak, 'Midnight' => $timings->Midnight]);
 
         app('TeamsConnector')->send($card);
     }
